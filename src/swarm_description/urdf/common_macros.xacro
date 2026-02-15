@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <material name="dark_grey"><color rgba="0.2 0.2 0.2 1.0"/></material>
+    <material name="industrial_orange"><color rgba="1.0 0.4 0.0 1.0"/></material>
+    <material name="brushed_aluminum"><color rgba="0.7 0.7 0.75 1.0"/></material>
+    <material name="tire_black"><color rgba="0.1 0.1 0.1 1.0"/></material>
+    <material name="sensor_black"><color rgba="0.05 0.05 0.05 1.0"/></material>
+    <material name="lens_blue"><color rgba="0.0 0.2 0.8 0.6"/></material>
+    <material name="emission_blue"><color rgba="0.0 0.8 1.0 1.0"/></material>
+
+    <xacro:macro name="box_inertia" params="m x y z">
+        <inertial>
+            <mass value="${m}"/>
+            <inertia ixx="${(m/12) * (y*y + z*z)}" ixy="0.0" ixz="0.0"
+                     iyy="${(m/12) * (x*x + z*z)}" iyz="0.0"
+                     izz="${(m/12) * (x*x + y*y)}"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_inertia" params="m r h">
+        <inertial>
+            <mass value="${m}"/>
+            <inertia ixx="${(m/12) * (3*r*r + h*h)}" ixy="0" ixz="0"
+                     iyy="${(m/12) * (3*r*r + h*h)}" iyz="0"
+                     izz="${(m/2) * (r*r)}"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_inertia" params="m r">
+        <inertial>
+            <mass value="${m}"/>
+            <inertia ixx="${(2/5) * m * (r*r)}" ixy="0.0" ixz="0.0"
+                     iyy="${(2/5) * m * (r*r)}" iyz="0.0"
+                     izz="${(2/5) * m * (r*r)}"/>
+        </inertial>
+    </xacro:macro>
+</robot>
