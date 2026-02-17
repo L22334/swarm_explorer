@@ -24,7 +24,7 @@
         <joint name="lidar_joint" type="fixed">
             <parent link="${parent_link}"/>
             <child link="lidar_link"/>
-            <origin xyz="0.05 0 ${chassis_height}" rpy="0 0 0"/>
+            <origin xyz="0.05 0 ${chassis_height + 0.01}" rpy="0 0 0"/>
         </joint>
 
         <gazebo reference="lidar_link">
@@ -63,7 +63,15 @@
         <joint name="camera_joint" type="fixed">
             <parent link="${parent_link}"/>
             <child link="camera_link"/>
-            <origin xyz="0.12 0 ${chassis_height + 0.05}" rpy="0 0 0"/>
+            <origin xyz="0.12 0 ${chassis_height + 0.01}" rpy="0 0 0"/>
+        </joint>
+
+        <link name="camera_link_optical"/>
+
+        <joint name="camera_optical_joint" type="fixed">
+            <parent link="camera_link"/>
+            <child link="camera_link_optical"/>
+            <origin xyz="0 0 0" rpy="-1.5707 0 -1.5707"/>
         </joint>
         
         <gazebo reference="camera_link">
@@ -73,8 +81,11 @@
                 <pose relative_to="camera_link">0.01 0 0 0 0 0</pose>
                 <always_on>1</always_on>
                 <update_rate>10</update_rate>
-                <topic>/camera/image</topic> <frame_id>camera_link</frame_id>
-                <gz_frame_id>camera_link</gz_frame_id>
+                <topic>/camera/image</topic> 
+                
+                <frame_id>camera_link_optical</frame_id>
+                <gz_frame_id>camera_link_optical</gz_frame_id>
+                
                 <camera>
                     <horizontal_fov>1.2</horizontal_fov>
                     <image><width>640</width><height>480</height><format>R8G8B8</format></image>
@@ -86,8 +97,11 @@
                 <pose relative_to="camera_link">0.01 0 0 0 0 0</pose>
                 <always_on>1</always_on>
                 <update_rate>10</update_rate>
-                <topic>/camera/depth_image</topic> <frame_id>camera_link</frame_id>
-                <gz_frame_id>camera_link</gz_frame_id>
+                <topic>/camera/depth_image</topic> 
+                
+                <frame_id>camera_link_optical</frame_id>
+                <gz_frame_id>camera_link_optical</gz_frame_id>
+                
                 <camera>
                     <horizontal_fov>1.2</horizontal_fov>
                     <image><width>640</width><height>480</height><format>R_FLOAT32</format></image>
@@ -100,10 +114,13 @@
             <visual><geometry><box size="0.01 0.01 0.01"/></geometry><material name="industrial_orange"/></visual>
             <inertial><mass value="0.01"/><inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/></inertial>
         </link>
+        
         <joint name="imu_joint" type="fixed">
             <parent link="${parent_link}"/>
-            <child link="imu_link"/><origin xyz="0 0 0.05"/>
+            <child link="imu_link"/>
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
         </joint>
+
          <gazebo reference="imu_link">
             <sensor name="imu" type="imu">
                 <frame_id>imu_link</frame_id>

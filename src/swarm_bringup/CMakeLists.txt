@@ -9,7 +9,7 @@ find_package(ament_cmake REQUIRED)
 
 # 安装 launch 和 config 文件夹
 install(
-  DIRECTORY launch config
+  DIRECTORY launch config maps
   DESTINATION share/${PROJECT_NAME}
 )
 

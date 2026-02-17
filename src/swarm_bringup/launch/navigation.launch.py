@@ -7,20 +7,25 @@ from launch.substitutions import Command, PathJoinSubstitution
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    # 1. 定义包名变量，方便复用
+    # 1. 定义包路径
     pkg_swarm_description = get_package_share_directory('swarm_description')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-    pkg_swarm_bringup = get_package_share_directory('swarm_bringup')    
-    pkg_slam_toolbox = get_package_share_directory('slam_toolbox')
+    pkg_swarm_bringup = get_package_share_directory('swarm_bringup')
+    pkg_nav2_bringup = get_package_share_directory('nav2_bringup')
+    rviz_config_file = os.path.join(pkg_nav2_bringup, 'rviz', 'nav2_default_view.rviz')
 
-    # 2. 准备文件路径
+    # 2. 定义文件路径
     xacro_file = os.path.join(pkg_swarm_description, 'urdf', 'robot.urdf.xacro')
-    world_file = os.path.join(pkg_swarm_description, 'worlds', 'warehouse.sdf') 
+    world_file = os.path.join(pkg_swarm_description, 'worlds', 'warehouse.sdf')
     bridge_config_file = os.path.join(pkg_swarm_bringup, 'config', 'bridge.yaml')
     
-    # === 你的自定义 SLAM 配置文件路径 ===
-    # 确保你已经修改了 CMakeLists.txt 把 config 文件夹安装到了 share 目录
-    slam_config_file = os.path.join(pkg_swarm_bringup, 'config', 'mapper_params_online_async.yaml')
+    # === [关键配置 1] 地图路径 ===
+    # 加载你刚才保存好的地图
+    map_file = os.path.join(pkg_swarm_bringup, 'maps', 'warehouse_map.yaml')
+    
+    # === [关键配置 2] Nav2 参数文件 ===
+    # 加载刚才拷贝过来的参数文件
+    nav2_params_file = os.path.join(pkg_swarm_bringup, 'config', 'nav2_params.yaml')
 
     # 3. 设置 Gazebo 资源路径
     gz_resource_path = SetEnvironmentVariable(
@@ -36,12 +41,11 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'robot_description': robot_description_content,
-            'use_sim_time': True,
-            'publish_frequency': 100.0 
+            'use_sim_time': True
         }]
     )
 
-    # 5. 启动 Gazebo 仿真环境
+    # 5. 启动 Gazebo
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
@@ -49,7 +53,7 @@ def generate_launch_description():
         launch_arguments={'gz_args': f'-r {world_file}'}.items(),
     )
 
-    # 6. 生成机器人实体 (Spawn)
+    # 6. 生成机器人实体
     node_spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
@@ -57,7 +61,7 @@ def generate_launch_description():
         arguments=[
             '-topic', 'robot_description',
             '-name', 'swarm_bot',
-            '-x', '0.0', '-y', '0.0', '-z', '0.15' 
+            '-x', '0.0', '-y', '0.0', '-z', '0.15'
         ]
     )
 
@@ -72,16 +76,28 @@ def generate_launch_description():
         output='screen'
     )
 
-    # === [核心修复] 使用官方 Launch 包含文件 ===
-    # 这样会自动启动 Lifecycle Manager 来激活 SLAM
-    slam_toolbox_launch = IncludeLaunchDescription(
+    # === [核心部分] 启动 Nav2 全家桶 ===
+    # 这一步会启动 AMCL(定位), Planner(规划), Controller(控制), MapServer(地图)
+    nav2_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_slam_toolbox, 'launch', 'online_async_launch.py')
+            os.path.join(pkg_nav2_bringup, 'launch', 'bringup_launch.py')
         ),
         launch_arguments={
-            'slam_params_file': slam_config_file, # 传入你的配置文件
-            'use_sim_time': 'true'
+            'map': map_file,            # 传入地图
+            'params_file': nav2_params_file, # 传入参数配置
+            'use_sim_time': 'true',     # 使用仿真时间
+            'autostart': 'true'         # 自动激活所有节点
         }.items()
+    )
+
+    # 8. 启动 RViz2 (加载 Nav2 专用配置，可选)
+    # 
+    node_rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        arguments=['-d', rviz_config_file],
+        parameters=[{'use_sim_time': True}],
+        output='screen'
     )
 
     return LaunchDescription([
@@ -90,5 +106,6 @@ def generate_launch_description():
         node_spawn_entity,
         gazebo,
         node_ros_gz_bridge,
-        slam_toolbox_launch # 启动 SLAM 套件
+        nav2_launch,
+        node_rviz 
     ])
