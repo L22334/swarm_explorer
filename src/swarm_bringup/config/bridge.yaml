@@ -1,40 +1,28 @@
 # Gazebo -> ROS 2 话题桥接配置
-
-# 1. 核心时钟与变换 (消除 TF_OLD_DATA 的关键)
 - ros_topic_name: /clock
   gz_topic_name: /clock
   ros_type_name: rosgraph_msgs/msg/Clock
   gz_type_name: gz.msgs.Clock
   direction: GZ_TO_ROS
 
-- ros_topic_name: /tf
-  gz_topic_name: /tf
-  ros_type_name: tf2_msgs/msg/TFMessage
-  gz_type_name: gz.msgs.Pose_V
-  direction: GZ_TO_ROS
-
-# 2. 运动控制
 - ros_topic_name: /cmd_vel
   gz_topic_name: /cmd_vel
   ros_type_name: geometry_msgs/msg/Twist
   gz_type_name: gz.msgs.Twist
   direction: ROS_TO_GZ
 
-# 3. 里程计 (修正类型以匹配插件默认输出)
 - ros_topic_name: /odom
   gz_topic_name: /odom
   ros_type_name: nav_msgs/msg/Odometry
   gz_type_name: gz.msgs.Odometry
   direction: GZ_TO_ROS
 
-# 4. 传感器数据
 - ros_topic_name: /scan
   gz_topic_name: /scan
   ros_type_name: sensor_msgs/msg/LaserScan
   gz_type_name: gz.msgs.LaserScan
   direction: GZ_TO_ROS
 
-  # 5. 关节状态 (修复轮子和雷达不显示的关键)
 - ros_topic_name: /joint_states
   gz_topic_name: /joint_states
   ros_type_name: sensor_msgs/msg/JointState
@@ -57,4 +45,10 @@
   gz_topic_name: /camera/camera_info
   ros_type_name: sensor_msgs/msg/CameraInfo
   gz_type_name: gz.msgs.CameraInfo
+  direction: GZ_TO_ROS
+
+- ros_topic_name: /imu/data
+  gz_topic_name: /imu  
+  ros_type_name: sensor_msgs/msg/Imu
+  gz_type_name: gz.msgs.IMU
   direction: GZ_TO_ROS

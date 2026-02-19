@@ -60,13 +60,22 @@ def generate_launch_description():
         }]               
     )
 
-
-
+    robot_localization = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        output='screen',
+        name='ekf_filter_node',
+        parameters=[
+            {'use_sim_time': True},
+            os.path.join(pkg_swm_bringup, 'config', 'ekf_fusion.yaml')
+        ]
+    )
 
     return LaunchDescription([
         gazebo_resource_path,
         robot_state_publisher,
         gazebo,
         spawn_entity,
-        ros_gz_bridge
+        ros_gz_bridge,
+        robot_localization
     ])
