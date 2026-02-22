@@ -16,7 +16,7 @@ def generate_launch_description():
     
     gazebo_resource_path = SetEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', 
-        os.path.dirname(pkg_swm_description)
+        pkg_swm_description
     )
 
     robot_state_publisher = Node(

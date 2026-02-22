@@ -106,7 +106,23 @@
         <collision name="col"><geometry><box><size>0.2 0.3 0.2</size></box></geometry></collision>
         <visual name="box_vis"><geometry><box><size>0.2 0.3 0.2</size></box></geometry><material><ambient>0.7 0.6 0.4 1</ambient><diffuse>0.7 0.6 0.4 1</diffuse></material></visual>
         <visual name="qr_bg"><pose>-0.101 0 0 0 0 0</pose><geometry><box><size>0.002 0.15 0.15</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
-        <visual name="qr_code"><pose>-0.102 0 0 0 0 0</pose><geometry><box><size>0.002 0.1 0.1</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        
+        <visual name="qr_code">
+          <pose>-0.102 0 0 0 0 0</pose>
+          <geometry><box><size>0.002 0.1 0.1</size></box></geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>qr/Item_01.png</albedo_map>
+                <roughness>1.0</roughness>
+                <metalness>0.0</metalness>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
       </link>
     </model>
 
@@ -117,7 +133,23 @@
         <collision name="col"><geometry><box><size>0.2 0.3 0.2</size></box></geometry></collision>
         <visual name="box_vis"><geometry><box><size>0.2 0.3 0.2</size></box></geometry><material><ambient>0.7 0.6 0.4 1</ambient><diffuse>0.7 0.6 0.4 1</diffuse></material></visual>
         <visual name="qr_bg"><pose>-0.101 0 0 0 0 0</pose><geometry><box><size>0.002 0.15 0.15</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
-        <visual name="qr_code"><pose>-0.102 0 0 0 0 0</pose><geometry><box><size>0.002 0.1 0.1</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        
+        <visual name="qr_code">
+          <pose>-0.102 0 0 0 0 0</pose>
+          <geometry><box><size>0.002 0.1 0.1</size></box></geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>qr/Item_02.png</albedo_map>
+                <roughness>1.0</roughness>
+                <metalness>0.0</metalness>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
       </link>
     </model>
 
@@ -128,7 +160,23 @@
         <collision name="col"><geometry><box><size>0.2 0.3 0.2</size></box></geometry></collision>
         <visual name="box_vis"><geometry><box><size>0.2 0.3 0.2</size></box></geometry><material><ambient>0.7 0.6 0.4 1</ambient><diffuse>0.7 0.6 0.4 1</diffuse></material></visual>
         <visual name="qr_bg"><pose>-0.101 0 0 0 0 0</pose><geometry><box><size>0.002 0.15 0.15</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
-        <visual name="qr_code"><pose>-0.102 0 0 0 0 0</pose><geometry><box><size>0.002 0.1 0.1</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        
+        <visual name="qr_code">
+          <pose>-0.102 0 0 0 0 0</pose>
+          <geometry><box><size>0.002 0.1 0.1</size></box></geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>qr/Item_03.png</albedo_map>
+                <roughness>1.0</roughness>
+                <metalness>0.0</metalness>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
       </link>
     </model>
 
@@ -139,10 +187,25 @@
         <collision name="col"><geometry><box><size>0.2 0.3 0.2</size></box></geometry></collision>
         <visual name="box_vis"><geometry><box><size>0.2 0.3 0.2</size></box></geometry><material><ambient>0.7 0.6 0.4 1</ambient><diffuse>0.7 0.6 0.4 1</diffuse></material></visual>
         <visual name="qr_bg"><pose>-0.101 0 0 0 0 0</pose><geometry><box><size>0.002 0.15 0.15</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
-        <visual name="qr_code"><pose>-0.102 0 0 0 0 0</pose><geometry><box><size>0.002 0.1 0.1</size></box></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        
+        <visual name="qr_code">
+          <pose>-0.102 0 0 0 0 0</pose>
+          <geometry><box><size>0.002 0.1 0.1</size></box></geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>qr/Item_04.png</albedo_map>
+                <roughness>1.0</roughness>
+                <metalness>0.0</metalness>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
       </link>
     </model>
-
     <model name="charging_dock">
       <static>true</static>
       <pose>0.0 0.0 0.005 0 0 0</pose>
