@@ -1,0 +1,35 @@
+<root BTCPP_format="4">
+    <BehaviorTree ID="WarehouseTaskTree">
+        <Sequence name="Process_All_Orders">
+            
+            <Sequence name="Handle_Order_1">
+                <GetOrderData order_id="Order_01" 
+                              target_x="{board_x}" 
+                              target_y="{board_y}" 
+                              target_yaw="{board_yaw}" 
+                              target_qr="{board_qr}" />
+                              
+                <Nav2Pose goal_x="{board_x}" goal_y="{board_y}" goal_yaw="{board_yaw}" />
+                
+                <WaitForQR expected_qr="{board_qr}" timeout="10.0" />
+                
+                <VisualServoDocking target_width="140.0" timeout="20.0" />
+            </Sequence>
+
+            <Sequence name="Handle_Order_2">
+                <GetOrderData order_id="Order_03" 
+                              target_x="{board_x}" 
+                              target_y="{board_y}" 
+                              target_yaw="{board_yaw}" 
+                              target_qr="{board_qr}" />
+                              
+                <Nav2Pose goal_x="{board_x}" goal_y="{board_y}" goal_yaw="{board_yaw}" />
+                <WaitForQR expected_qr="{board_qr}" timeout="10.0" />
+                <VisualServoDocking target_width="140.0" timeout="20.0" />
+            </Sequence>
+            
+            <Nav2Pose goal_x="0.0" goal_y="0.0" goal_yaw="3.14159" />
+            
+        </Sequence>
+    </BehaviorTree>
+</root>

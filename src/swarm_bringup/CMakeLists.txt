@@ -5,9 +5,30 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(behaviortree_cpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
-# 安装 launch 和 config 文件夹
+add_executable(bt_dispatcher_node src/bt_dispatcher_node.cpp)
+
+ament_target_dependencies(bt_dispatcher_node 
+  rclcpp 
+  std_msgs 
+  behaviortree_cpp 
+  rclcpp_action 
+  nav2_msgs 
+  tf2 
+  tf2_geometry_msgs
+)
+
+install(TARGETS bt_dispatcher_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 install(
   DIRECTORY launch config maps
   DESTINATION share/${PROJECT_NAME}
