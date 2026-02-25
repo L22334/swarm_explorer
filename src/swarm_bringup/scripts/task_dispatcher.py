@@ -23,22 +23,17 @@ class WarehouseTaskManager(Node):
         self.get_logger().info("智能仓储任务调度系统已启动...")
         self.state = State.IDLE
         
-        # 1. 创建 Nav2 导航的 Action 客户端
         self.nav_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
         
-        # 2. 监听 C++ 视觉节点发来的真实二维码数据 (打通感知闭环)
         self.qr_sub = self.create_subscription(String, '/perception/qr_result', self.qr_callback, 10)
         
-        # 等待 Nav2 启动
         self.get_logger().info("等待 Nav2 Action Server 上线...")
         self.nav_client.wait_for_server()
         self.get_logger().info("Nav2 准备就绪！")
 
-        # 启动任务流程
         self.start_task()
 
     def euler_to_quaternion(self, yaw):
-        """简单的欧拉角转四元数辅助函数"""
         return [0.0, 0.0, math.sin(yaw / 2.0), math.cos(yaw / 2.0)]
 
     def create_pose(self, x, y, yaw):
@@ -62,8 +57,6 @@ class WarehouseTaskManager(Node):
         self.state = State.NAV_TO_SHELF
         self.get_logger().info("[状态变更] 接收到订单：前往 1 号货架取货！")
         
-        # 货物位于 x=2.5, y=1.65，二维码朝向 -Y 方向
-        # 修正后的坐标：小车停在 x=2.5, y=0.9，车头朝向 +Y方向 (1.5707 弧度) 正对二维码
         shelf_pose = self.create_pose(x=2.5, y=0.9, yaw=1.5707) 
         self.send_nav_goal(shelf_pose)
 
@@ -108,15 +101,13 @@ class WarehouseTaskManager(Node):
     def start_scanning(self):
         """阶段 2：视觉对准与真实扫描"""
         self.state = State.SCANNING
-        self.get_logger().info("📸 [状态变更] 到达货架！已开启视觉监听，等待 C++ OpenCV 节点回传数据...")
-        # 彻底去掉了 time.sleep 假等待！现在它会一直等，直到 qr_callback 被触发
+        self.get_logger().info("[状态变更] 到达货架！已开启视觉监听，等待 C++ OpenCV 节点回传数据...")
 
     def qr_callback(self, msg):
         """处理 C++ 传回的真实二维码数据"""
-        # 只有当业务处于 SCANNING 状态时，才处理二维码 (防止小车路过时乱扫)
         if self.state == State.SCANNING:
             if "Item_01" in msg.data:
-                self.get_logger().info(f"[硬核视觉融合] 真实识别成功！收到 C++ 传回数据: {msg.data}")
+                self.get_logger().info(f"[视觉融合] 真实识别成功！收到 C++ 传回数据: {msg.data}")
                 self.start_docking()
 
     def start_docking(self):
@@ -124,7 +115,6 @@ class WarehouseTaskManager(Node):
         self.state = State.DOCKING
         self.get_logger().info("[状态变更] 确认货物正确，执行精准对接 (Docking) 与模拟取货...")
         
-        # 模拟对接动作耗时 (2秒) - 因为我们没有写真实的机械臂，所以这里仅保留一个动作延时
         self.timer = self.create_timer(2.0, self.docking_complete)
 
     def docking_complete(self):
@@ -135,7 +125,6 @@ class WarehouseTaskManager(Node):
         self.state = State.RETURN_HOME
         self.get_logger().info("[状态变更] 正在返回充电桩...")
         
-        # 充电桩位置 (地图原点 0,0) 转180度倒车入库
         home_pose = self.create_pose(x=0.0, y=0.0, yaw=3.14) 
         self.send_nav_goal(home_pose)
 

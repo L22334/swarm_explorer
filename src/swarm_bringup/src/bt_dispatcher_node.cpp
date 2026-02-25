@@ -12,9 +12,7 @@
 
 using namespace std::chrono_literals;
 
-// ==========================================
-// 1. 业务节点：模拟从系统查询订单信息并写入黑板
-// ==========================================
+
 class GetOrderData : public BT::SyncActionNode {
 public:
     GetOrderData(const std::string& name, const BT::NodeConfig& config)
@@ -59,9 +57,7 @@ public:
     }
 };
 
-// ==========================================
-// 2. 视觉伺服对接节点：闭环 PID 控制
-// ==========================================
+
 class VisualServoDocking : public BT::StatefulActionNode {
 public:
     VisualServoDocking(const std::string& name, const BT::NodeConfig& config, rclcpp::Node::SharedPtr node)
@@ -102,7 +98,7 @@ public:
             return BT::NodeStatus::FAILURE;
         }
 
-        // 防丢失保护：超1.5秒未见二维码则刹车等待
+        
         if (!data_received_ || (ros_node_->now() - last_msg_time_).seconds() > 1.5) {
             stopRobot();
             return BT::NodeStatus::RUNNING; 
@@ -110,14 +106,14 @@ public:
 
         auto twist_msg = geometry_msgs::msg::Twist();
         
-        // P 控制器算法
+        
         double kp_yaw = 0.003; 
         twist_msg.angular.z = -kp_yaw * last_offset_x_; 
 
         double kp_linear = 0.005;
         double error_dist = target_width - last_width_;
         
-        // 当偏航角对准（误差<40像素）时，才允许前进
+        
         if (std::abs(last_offset_x_) < 40.0 && error_dist > 0) {
             twist_msg.linear.x = std::min(kp_linear * error_dist, 0.15); 
         } else {
@@ -126,7 +122,7 @@ public:
 
         cmd_pub_->publish(twist_msg);
 
-        // 成功条件：误差<5像素 且 偏航对准<20像素
+        
         if (error_dist <= 5.0 && std::abs(last_offset_x_) < 20.0) {
             std::cout << "[SERVOING] 对接完美贴合！正在模拟抓取货物..." << std::endl;
             stopRobot();
@@ -159,9 +155,7 @@ private:
     bool data_received_ = false;
 };
 
-// ==========================================
-// 3. 扫码验证节点 (异步)
-// ==========================================
+
 class WaitForQR : public BT::StatefulActionNode {
 public:
     WaitForQR(const std::string& name, const BT::NodeConfig& config, rclcpp::Node::SharedPtr node)
@@ -210,9 +204,7 @@ private:
     rclcpp::Time start_time_;
 };
 
-// ==========================================
-// 4. Nav2 导航节点 (异步 Action Client)
-// ==========================================
+
 using NavigateToPose = nav2_msgs::action::NavigateToPose;
 using GoalHandleNav2 = rclcpp_action::ClientGoalHandle<NavigateToPose>;
 
@@ -283,19 +275,15 @@ private:
     rclcpp_action::ResultCode nav_result_ = rclcpp_action::ResultCode::UNKNOWN;
 };
 
-// ==========================================
-// 主函数与工厂注册
-// ==========================================
+
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<rclcpp::Node>("bt_dispatcher_node");
 
     BT::BehaviorTreeFactory factory;
 
-    // 注册无需 ROS node 指针的节点
     factory.registerNodeType<GetOrderData>("GetOrderData");
     
-    // 注册需要 ROS node 指针的节点
     factory.registerBuilder<VisualServoDocking>("VisualServoDocking",
         [node](const std::string& name, const BT::NodeConfig& config) {
             return std::make_unique<VisualServoDocking>(name, config, node);
