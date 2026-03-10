@@ -126,7 +126,7 @@ public:
         if (error_dist <= 5.0 && std::abs(last_offset_x_) < 20.0) {
             std::cout << "[SERVOING] 对接完美贴合！正在模拟抓取货物..." << std::endl;
             stopRobot();
-            rclcpp::sleep_for(std::chrono::seconds(2)); // 模拟机械臂动作
+            rclcpp::sleep_for(std::chrono::seconds(2));
             return BT::NodeStatus::SUCCESS;
         }
 

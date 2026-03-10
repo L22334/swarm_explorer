@@ -1,7 +1,7 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import SetEnvironmentVariable, IncludeLaunchDescription, TimerAction
+from launch.actions import SetEnvironmentVariable, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch_ros.actions import Node
@@ -16,7 +16,7 @@ def generate_launch_description():
     
     gazebo_resource_path = SetEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', 
-        pkg_swm_description
+        pkg_swm_description + ':' + os.environ.get('GZ_SIM_RESOURCE_PATH', '')
     )
 
     robot_state_publisher = Node(
@@ -25,11 +25,10 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'use_sim_time': True,
-            'robot_description': Command(['xacro ', xacro_file])
+            'robot_description': Command(['xacro', ' ', xacro_file])
         }]
     ) 
 
-    # 4. Gazebo Sim
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
@@ -37,7 +36,6 @@ def generate_launch_description():
         launch_arguments={'gz_args': f'-r {world_file}'}.items(),
     )
 
-    # 5. Spawn Robot
     spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
@@ -49,7 +47,6 @@ def generate_launch_description():
         ]
     )
 
-    # 6. Bridge
     ros_gz_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -58,6 +55,16 @@ def generate_launch_description():
             'config_file': os.path.join(pkg_swm_bringup, 'config', 'bridge.yaml'),
             'use_sim_time': True
         }]               
+    )
+
+    twist_stamper = Node(
+        package='twist_stamper',
+        executable='twist_stamper',
+        parameters=[{'use_sim_time': True}],
+        remappings=[
+            ('/cmd_vel_in', '/cmd_vel_nav'),  
+            ('/cmd_vel_out', '/diff_drive_base_controller/cmd_vel') 
+        ]
     )
 
     robot_localization = Node(
@@ -80,7 +87,7 @@ def generate_launch_description():
     load_diff_drive_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["diff_drive_base_controller", "--controller-manager", "/controller_manager"],
+        arguments=["diff_drive_base_controller", "--controller-manager", "/controller_manager"]
     )
 
     return LaunchDescription([
@@ -89,6 +96,7 @@ def generate_launch_description():
         gazebo,
         spawn_entity,
         ros_gz_bridge,
+        twist_stamper, 
         robot_localization,
         load_joint_state_broadcaster,
         load_diff_drive_controller

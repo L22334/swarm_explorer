@@ -14,7 +14,7 @@ diff_drive_base_controller:
     use_sim_time: true
     left_wheel_names: ["left_wheel_joint"]
     right_wheel_names: ["right_wheel_joint"]
-    use_stamped_vel: false
+    use_stamped_vel: true 
     
     wheel_separation: 0.28
     wheel_radius: 0.045
@@ -22,8 +22,8 @@ diff_drive_base_controller:
     publish_rate: 50.0
     base_frame_id: base_footprint
     odom_frame_id: odom
-    
-    enable_odom_tf: false 
+
+    enable_odom_tf: false
     
     cmd_vel_timeout: 0.5
     publish_cmd: true
