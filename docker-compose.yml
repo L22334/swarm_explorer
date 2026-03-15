@@ -1,0 +1,14 @@
+services:
+  swarm_dev:
+    build: .
+    image: swarm_explorer_jazzy:latest
+    container_name: swarm_container
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - .:/ros2_ws/src/swarm_explorer
+    privileged: true
+    stdin_open: true
+    tty: true
